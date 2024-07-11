@@ -1,0 +1,46 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98.50930878910731 103.39074692484394"
+    width="98.50930878910731" height="103.39074692484394">
+    <!-- svg-source:excalidraw -->
+
+    <defs>
+        <style class="style-fonts">
+            @font-face {
+                font-family: "Virgil";
+                src: url("https://excalidraw.com/Virgil.woff2");
+            }
+
+            @font-face {
+                font-family: "Cascadia";
+                src: url("https://excalidraw.com/Cascadia.woff2");
+            }
+
+            @font-face {
+                font-family: "Assistant";
+                src: url("https://excalidraw.com/Assistant-Regular.woff2");
+            }
+        </style>
+
+    </defs>
+    <rect x="0" y="0" width="98.50930878910731" height="103.39074692484394" fill="#ffffff"></rect>
+    <g stroke-linecap="round">
+        <g transform="translate(47.02715768801818 29.33700817972317) rotate(0 -17.524147814983507 32.026869372560384)">
+            <path
+                d="M0 0 C-5.84 6.04, -29.61 25.58, -35.05 36.26 C-40.49 46.93, -33.03 59.42, -32.63 64.05 M0 0 C-5.84 6.04, -29.61 25.58, -35.05 36.26 C-40.49 46.93, -33.03 59.42, -32.63 64.05"
+                stroke="#1e1e1e" stroke-width="1" fill="none"></path>
+        </g>
+        <g transform="translate(47.02715768801818 29.33700817972317) rotate(0 -17.524147814983507 32.026869372560384)">
+            <path
+                d="M-40.83 52.77 C-38.02 56.64, -35.21 60.51, -32.63 64.05 M-40.83 52.77 C-38.8 55.56, -36.77 58.35, -32.63 64.05"
+                stroke="#1e1e1e" stroke-width="1" fill="none"></path>
+        </g>
+        <g transform="translate(47.02715768801818 29.33700817972317) rotate(0 -17.524147814983507 32.026869372560384)">
+            <path
+                d="M-31.66 50.14 C-31.99 54.91, -32.32 59.68, -32.63 64.05 M-31.66 50.14 C-31.9 53.58, -32.14 57.02, -32.63 64.05"
+                stroke="#1e1e1e" stroke-width="1" fill="none"></path>
+        </g>
+    </g>
+    <mask></mask>
+    <g transform="translate(15.213349316451058 10) rotate(0 36.647979736328125 10)"><text x="36.647979736328125"
+            y="14.016" font-family="Virgil, Segoe UI Emoji" font-size="16px" fill="#1e1e1e" text-anchor="middle"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Hover me!</text></g>
+</svg>
