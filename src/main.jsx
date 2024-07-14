@@ -10,7 +10,7 @@ import { loaderHardvar as loaderHRoot } from "./utils/loader.js";
 import Chicago from "./routes/Chicago.jsx";
 import Hardvar from "./routes/Hardvar.jsx";
 
-const URL_METROPOLITAN = "https://collectionapi.metmuseum.org/public/collection/v1/";
+const URL_METROPOLITAN = "https://collectionapi.metmuseum.org/public/collection/v1/objects";
 const URL_CHICAGO = "https://api.artic.edu/api/v1/artworks";
 
 const router = createBrowserRouter([

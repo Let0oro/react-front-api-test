@@ -65,7 +65,8 @@ const Hardvar = () => {
         }
       );
       const { info, records } = data;
-      console.log({ info, records });
+      // console.log(records.filter((rec) => rec?.caption?.length));
+      console.log({ records });
       dispatch({
         type: "GET_INFO",
         list: records,
@@ -79,48 +80,45 @@ const Hardvar = () => {
 
   const { list } = listItems;
 
-  const handleChangeRes = (res) => {
-    dispatch({ type: "CHANGE_RESOURCE", resource: res });
-    const allBtns = [...document.querySelectorAll(".sidebar button")];
-    const btnActive = allBtns.find((btn) => btn.outerText.toLowerCase() == res);
-    console.log(btnActive);
-    btnActive.className = 'active';
-    // allBtns.forEach((btn) => btn.className = '');
+  const handleChangeRes = (ev) => {
+    dispatch({ type: "CHANGE_RESOURCE", resource: ev.target.value });
+    window.scrollTo(0, 0);
   };
+
+  async function initMap(geo) {
+    const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    document.querySelectorAll(".map").forEach((mp) => {
+      const map = new Map(mp, {
+        center: { ...geo, lng: geo.lon },
+        zoom: 15,
+        mapId: "4504f8b37365c3d0",
+      });
+      new AdvancedMarkerElement({
+        map,
+        position: { ...geo, lng: geo.lon },
+      });
+    });
+    const infoWindow = new google.maps.InfoWindow();
+    infoWindow.setPosition({ ...geo, lng: geo.lon });
+  }
 
   return (
     <HardvarMenu>
-      <SideBar className="sidebar">
-        <ul>
-          {[
-            "person",
-            "exhibition",
-            "publication",
-            "gallery",
-            "spectrum",
-            "classification",
-            "century",
-            "color",
-            "culture",
-            "group",
-            "medium",
-            "support",
-            "period",
-            "place",
-            "technique",
-            "worktype",
-            "activity",
-            "site",
-            "video",
-            "image",
-            "audio",
-            "annotation",
-          ].map((el) => (
-            <li key={uuidv4()}>
-              <button className="" onClick={() => handleChangeRes(el)}>{el}</button>
-            </li>
-          ))}{" "}
-        </ul>
+      <SideBar
+        defaultValue={listItems?.resource || "gallery"}
+        onChange={handleChangeRes}
+      >
+        <option value={"gallery"}>gallery</option>
+        <option value={"person"}>person</option>
+        <option value={"exhibition"}>exhibition</option>
+        <option value={"publication"}>publication</option>
+        <option value={"culture"}>culture</option>
+        <option value={"site"}>site</option>
+        <option value={"video"}>video</option>
+        <option value={"image"}>image</option>
+        <option value={"audio"}>audio</option>
+        <option value={"annotation"}>annotation</option>
       </SideBar>
       <List>
         <Suspense fallback={<Spinner />}>
@@ -129,15 +127,57 @@ const Hardvar = () => {
               const childrenReturned = [];
               for (let i = 0; i < list.length; i++) {
                 const work = list[i];
-                if (listItems.resource == "gallery") {
-                  childrenReturned.push(
-                    <Card key={uuidv4()}>
-                      <p>
-                        <i>
-                          {work.name} {work.theme ? `[${work.theme}]` : ""}
-                        </i>
-                        <b>By {work.donorname ? work.donorname : "Anon."}</b>
-                      </p>
+                if (!!work?.geo) initMap(work?.geo);
+                childrenReturned.push(
+                  <Card key={uuidv4()}>
+                    <p>
+                      <i>
+                        {work?.name || work?.displayname || work?.title || ""}{" "}
+                        {work?.volumetitle ? work.volumetitle : ""}{" "}
+                        {work?.body ? work.body : ""}{" "}
+                        {work?.volumenumber ? `(${work.volumenumber})` : ""}{" "}
+                        {work?.publicationplace
+                          ? `[${work.publicationplace}]`
+                          : ""}
+                        {work.theme ? `[${work.theme}]` : ""}
+                        {work.technique ? `[${work.technique}]` : ""}
+                        {work?.displaydate ? `(${work?.displaydate})` : ""}{" "}
+                        {work?.date ? `(${work?.date})` : ""}{" "}
+                        {work?.publicationdate
+                          ? `(${work?.publicationdate})`
+                          : ""}{" "}
+                        {work?.gender && work.gender != "unknown"
+                          ? `- ${work?.gender}`
+                          : ""}
+                        {work?.format && work.format != "image/jpeg"
+                          ? `- ${work?.format}`
+                          : ""}
+                      </i>
+                      {work?.address || ""}
+                      {work?.datebegin || work?.begindate || ""}
+                      {work?.birthplace ? `(${work.birthplace})` : ""}
+                      {!!work?.datebegin ||
+                      !!work?.begindate ||
+                      !!work?.birthplace
+                        ? " - "
+                        : " "}
+                      {work?.dateend || work.enddate || ""}
+                      {work?.deathplace ? `(${work.deathplace})` : ""}
+                      {/(gallery)(exhibition)/gi.test(listItems.resource) ? (
+                        <b>
+                          By{" "}
+                          {work?.donorname ||
+                            (work?.people?.length &&
+                              work?.people
+                                ?.map((ppl) => ppl.displayname)
+                                .join(", ")) ||
+                            "Anon."}
+                        </b>
+                      ) : (
+                        ""
+                      )}
+                    </p>
+                    {!!work?.gallerynumber && !!work.floor ? (
                       <p
                         style={{
                           border: "1px solid #888",
@@ -146,29 +186,110 @@ const Hardvar = () => {
                         }}
                       >
                         <strong>Gallery number: </strong>
-                        {work.gallerynumber}, <strong>floor: </strong>1
+                        {work?.gallerynumber}, <strong>floor: </strong>
+                        {work?.floor}
                       </p>
-                      <p>
-                        {work.labeltext ? (
-                          <span>
-                            <strong>Description: </strong> {work.labeltext}
-                          </span>
-                        ) : (
-                          ""
-                        )}{" "}
-                        <a target="_blank" href={work.url}>
-                          Ver más
+                    ) : (
+                      ""
+                    )}
+                    {!!work?.primaryimageurl ||
+                    work?.baseimageurl ||
+                    work?.target ? (
+                      <div
+                        style={{
+                          width: "60%",
+                          margin: "0 auto",
+                          display: "block",
+                        }}
+                      >
+                        <Suspense fallback={<Spinner />}>
+                          <img
+                            src={
+                              work?.primaryimageurl ||
+                              work?.baseimageurl ||
+                              work?.target
+                            }
+                            alt={work?.title || work?.technique}
+                          />
+                        </Suspense>
+                        {!!work?.caption ? `(${work?.caption})` : ""}
+                        {!!work?.source ? `Source: (${work?.source})` : ""}
+                      </div>
+                    ) : (
+                      ""
+                    )}
+
+                    {!!work.geo ? (
+                      <Suspense fallback={<Spinner />}>
+                        <Await
+                          resolve={work?.geo}
+                          children={<MapEl className="map"></MapEl>}
+                        ></Await>
+                      </Suspense>
+                    ) : (
+                      ""
+                    )}
+                    <p>
+                      {work?.labeltext ||
+                      work?.description ||
+                      work?.shortdescription ? (
+                        <span>
+                          <strong>Description: </strong>{" "}
+                          {work?.labeltext || work?.description + "\n"}
+                          {!!work?.shortdescription || ""}
+                        </span>
+                      ) : (
+                        ""
+                      )}{" "}
+                      {work?.primaryurl ? <br /> : ""}
+                      {(!!work?.url ||
+                        work?.primaryurl ||
+                        work?.iiifbaseuri) && (
+                        <a
+                          target="_blank"
+                          href={
+                            work?.url || work?.primaryurl || work?.iiifbaseuri
+                          }
+                        >
+                          {work?.primaryurl || work?.iiifbaseuri
+                            ? "Link to media"
+                            : "See more..."}
                         </a>
-                      </p>
-                      <small>
-                        Last updated:{" "}
-                        {new Intl.DateTimeFormat("es-ES").format(
-                          new Date(work.lastupdate)
-                        )}
-                      </small>
-                    </Card>
-                  );
-                }
+                      )}
+                    </p>
+                    <p>
+                      {!!work?.roles && !!work?.roles?.length ? (
+                        <span>
+                          Roles: {work.roles.map((rol) => rol.role).join(", ")}
+                        </span>
+                      ) : (
+                        ""
+                      )}{" "}
+                    </p>
+                    <small
+                      style={
+                        work?.copyright
+                          ? {
+                              display: "flex",
+                              justifyContent: "space-between",
+                              gap: "2rem",
+                            }
+                          : {}
+                      }
+                    >
+                      Last updated:{" "}
+                      {new Intl.DateTimeFormat("es-ES").format(
+                        new Date(work?.lastupdate)
+                      )}{" "}
+                      {work?.copyright ? (
+                        <strong>Copyright: {work.copyright}</strong>
+                      ) : (
+                        ""
+                      )}
+                    </small>
+                  </Card>
+                );
+                // }
               }
               return childrenReturned;
             }}
@@ -185,6 +306,7 @@ const Hardvar = () => {
                     ? listItems.totalPages
                     : listItems.page - 1,
               });
+              window.scrollTo(0, 0);
             }}
           >
             «
@@ -201,6 +323,7 @@ const Hardvar = () => {
                     ? 1
                     : listItems.page + 1,
               });
+              window.scrollTo(0, 0);
             }}
           >
             »
@@ -217,46 +340,47 @@ const HardvarMenu = styled.article`
   padding: 1rem;
   padding-top: 2rem;
   display: grid;
-  width: 75%;
-  padding-left: 25%;
   gap: 1rem;
+  scroll-behaviour: smooth;
 `;
 
-const SideBar = styled.section`
+const SideBar = styled.select`
   position: fixed;
-  left: 0;
-  top: 3rem;
-  height: 100%;
+  left: 2rem;
+  bottom: 2rem;
+  height: 2rem;
+  width: auto;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
   max-width: 20%;
 
-  & ul {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-
-  & button {
+  & option {
     padding: 5px;
     text-transform: capitalize;
     border: 1px solid transparent;
   }
-
-  & button.active {
-    border: 1px solid #646cff;
-  }
-
-  & * {
-    list-style: none;
-  }
 `;
 
-const Card = styled.div``;
+const Card = styled.div`
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #ccc;
+  text-align: justify;
+
+  & img {
+    width: 100%;
+  }
+`;
 const List = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const MapEl = styled.div`
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  aspect-ratio: 1;
 `;
 
 const ButtonPages = styled.div`
