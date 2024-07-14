@@ -1,12 +1,28 @@
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import "./App.css";
 import { NavLink, Outlet, useLoaderData, useLocation } from "react-router-dom";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
 function App() {
   const { pathname } = useLocation();
 
-  const handleEnter = (event) => {};
+  const handleEnter = (event) => {
+    const linkPath = new URL(event.target.href).pathname
+      .split("/")[1]
+      .toLocaleLowerCase();
+    console.log(linkPath);
+
+    const allImgs = [...document.querySelectorAll(".cut_title > a > img")];
+    const filteredUrl = allImgs.find((el) =>
+      el.alt.toLowerCase().includes(linkPath)
+    );
+    console.log(filteredUrl);
+    allImgs.forEach((img) => (img.parentElement.style.display = "none"));
+    filteredUrl.parentElement.style.display = "block";
+
+    const links = document.querySelectorAll(".link_main");
+    // links.forEach(a => a.)
+  };
 
   return (
     <>
@@ -27,30 +43,44 @@ function App() {
         >
           METROPOLITAN MUSEUM
         </NavLink>
-        <NavLink className="link_main bottom" to={"hardvar"}>
+        <NavLink
+          onMouseEnter={handleEnter}
+          className="link_main bottom"
+          to={"hardvar"}
+        >
           HARDVAR ART MUSEUM
         </NavLink>
-        <NavLink className="link_main right" to={"chicago"}>
+        <NavLink
+          onMouseEnter={handleEnter}
+          className="link_main right"
+          to={"chicago"}
+        >
           ART INSTITUTE OF CHICAGO
         </NavLink>
 
         <ImageMain>
-          <CutTitle>
-            <img
-              src="../public/assets/metmuseum.svg"
-              alt="Metropolitan Museum icon"
-            />
-            <img
-              src="https://api.artic.edu/docs/assets/logo.svg"
-              alt="Art Institute of Chicago icon"
-            />
-            <img
-              src="https://harvardartmuseums.org/favicon.ico"
-              alt="Hardvar Art Museum icon"
-            />
+          <CutTitle className="cut_title">
+            <NavLink to={"metropolitan"}>
+              <img
+                src="../assets/metmuseum.svg"
+                alt="Metropolitan Museum icon"
+              />
+            </NavLink>
+            <NavLink to={"chicago"}>
+              <img
+                src="https://api.artic.edu/docs/assets/logo.svg"
+                alt="Art Institute of Chicago icon"
+              />
+            </NavLink>
+            <NavLink to={"hardvar"}>
+              <img
+                src="https://harvardartmuseums.org/favicon.ico"
+                alt="Hardvar Art Museum icon"
+              />
+            </NavLink>
           </CutTitle>
-          <Arrow src="../public/assets/hoverme.svg" />
-          <Landscape src="../public/assets/marcocuadropixel.webp" />
+          <Arrow src="../assets/hoverme.svg" />
+          <Landscape src="../assets/marcocuadropixel.webp" />
         </ImageMain>
       </Main>
       <Outlet />
@@ -65,7 +95,12 @@ const Main = styled.main`
   align-items: center;
   height: 70lvh;
   margin-top: 2rem;
-  padding: 2.9rem 8.2rem;
+  padding: 1.9rem 8.6rem;
+  transition: padding 0.25s ease-out;
+
+  &:has(.bottom:hover) {
+    padding: 3rem 8.6rem;
+  }
 `;
 
 const ImageMain = styled.div`
@@ -97,6 +132,21 @@ const CutTitle = styled.div`
   background-color: #fff2;
   top: 18%;
   left: 21.3%;
+  display: grid;
+  place-items: center;
+
+  & a {
+    display: none;
+    width: 80%;
+
+    & img {
+    opacity: .9;
+    width: 100%;
+        background-image: radial-gradient(#fff2 20%, transparent 50%, transparent 100%);
+    // filter: invert(1);
+
+    }
+  }
 `;
 
 const Header = styled.header`

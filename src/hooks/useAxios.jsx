@@ -2,15 +2,14 @@ import axios from 'axios';
 import { useMemo, useState } from 'react'
 
 const useAxios = async (url) => {
-
     const [listItems, setListItems] = useState([]);
 
     useMemo(() => {
 
-        const axiosCall = () => {
-            const data = axios.get(url);
+        const axiosCall = async () => {
+            const data = await axios.get(...url);
 
-            console.log(data)
+            console.log({data})
 
             setListItems(data)
         }
@@ -19,7 +18,9 @@ const useAxios = async (url) => {
 
     }, [url])
 
-    return { listItems }
+    const {data} = listItems;
+
+    return await data
 }
 
 export default useAxios
