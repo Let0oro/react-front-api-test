@@ -65,8 +65,6 @@ const Hardvar = () => {
         }
       );
       const { info, records } = data;
-      // console.log(records.filter((rec) => rec?.caption?.length));
-      console.log({ records });
       dispatch({
         type: "GET_INFO",
         list: records,
