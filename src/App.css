@@ -113,7 +113,7 @@ i {
 
 .link_main.right {
   transform: rotateZ(90deg);
-  left: 69.8%;
+  left: 72%;
   transition: left .25s ease-out;
 }
 

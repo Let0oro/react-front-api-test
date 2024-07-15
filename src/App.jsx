@@ -1,6 +1,5 @@
-import { Suspense, useEffect, useMemo, useRef } from "react";
 import "./App.css";
-import { NavLink, Outlet, useLoaderData, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 function App() {
@@ -29,8 +28,8 @@ function App() {
       <Header style={{ display: pathname != "/" ? "flex" : "none" }}>
         <nav>
           <NavLink to={"metropolitan"}>METROPOLITAN MUSEUM</NavLink>
+          <NavLink><NavLandscape src="../assets/marcocuadropixel.webp" /></NavLink>
           <NavLink to={"hardvar"}>HARDVAR ART MUSEUM</NavLink>
-          <NavLink to={"chicago"}>ART INSTITUTE OF CHICAGO</NavLink>
         </nav>
       </Header>
       <Main style={{ display: pathname == "/" ? "flex" : "none" }}>
@@ -45,17 +44,10 @@ function App() {
         </NavLink>
         <NavLink
           onMouseEnter={handleEnter}
-          className="link_main bottom"
+          className="link_main right"
           to={"hardvar"}
         >
           HARDVAR ART MUSEUM
-        </NavLink>
-        <NavLink
-          onMouseEnter={handleEnter}
-          className="link_main right"
-          to={"chicago"}
-        >
-          ART INSTITUTE OF CHICAGO
         </NavLink>
 
         <ImageMain>
@@ -66,12 +58,7 @@ function App() {
                 alt="Metropolitan Museum icon"
               />
             </NavLink>
-            <NavLink to={"chicago"}>
-              <img
-                src="https://api.artic.edu/docs/assets/logo.svg"
-                alt="Art Institute of Chicago icon"
-              />
-            </NavLink>
+
             <NavLink to={"hardvar"}>
               <img
                 src="https://harvardartmuseums.org/favicon.ico"
@@ -122,6 +109,19 @@ const Landscape = styled.img`
   position: relative;
   shape-rendering: crispedges;
   object-fit: cover;
+`;
+
+const NavLandscape = styled.img`
+  width: 50px;
+  position: relative;
+  shape-rendering: crispedges;
+  object-fit: cover;
+  filter: sepia(1);
+  transition: filter .25s linear;
+  
+  &:hover {
+    filter: sepia(0);
+  }
 `;
 
 const CutTitle = styled.div`

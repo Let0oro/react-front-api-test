@@ -101,17 +101,23 @@ const MetDepartments = () => {
       });
     };
     getData();
-  }, [data, listItems?.page, listItems?.search, depSelect]);
+  }, [data, listItems?.search, depSelect]);
 
   useMemo(() => {
     const setData = async () => {
       const finaldata = await Promise.all(
-        listItems.idList.map(async (id) => {
-          const { data: response } = await axios.get(
-            `${URL_METROPOLITAN}objects/${id}`
-          );
-          return response;
-        })
+        listItems?.idList
+          ?.filter(
+            (id, ix) =>
+              ix >= (listItems?.page - 1) * listItems?.size &&
+              ix < listItems?.page * listItems?.size
+          )
+          ?.map(async (id) => {
+            const { data: response } = await axios.get(
+              `${URL_METROPOLITAN}objects/${id}`
+            );
+            return response;
+          })
       );
 
       dispatch({
@@ -119,12 +125,17 @@ const MetDepartments = () => {
         list: finaldata,
       });
     };
-    setData();
-  }, [listItems?.search, listItems?.idList.length]);
+    if (listItems?.idList?.length) {
+      setData();
+    } else {
+      dispatch({
+        type: "SET_INFO",
+        list: [{ title: "Not found" }],
+      });
+    }
+  }, [listItems?.search, listItems?.idList?.length, listItems?.page]);
 
   const { list } = listItems;
-
-  console.log(list);
 
   return (
     <MetMenu>
@@ -155,10 +166,137 @@ const MetDepartments = () => {
               const childrenReturned = [];
               for (let i = 0; i < list.length; i++) {
                 const work = list[i];
+                console.log(work);
+                if (work.title == "Not found") {
+                  return [
+                    <Card key={uuidv4()}>
+                      <p>
+                        <i>{work?.title}</i>
+                      </p>
+                    </Card>,
+                  ];
+                }
                 childrenReturned.push(
                   <Card key={uuidv4()}>
-                    <i>{work?.title}</i>
-                    <div style={{width: "100%", display: 'flex', justifyContent: 'center'}}><img style={{width: "70%"}} src={work?.primaryImage} alt={work?.title} /></div>
+                    <p>
+                      <i>{work?.title}</i>
+                    </p>
+                    <p>
+                      <strong>Accession year: </strong> {work?.accessionYear}
+                    </p>
+                    <p>
+                      <strong>Accession by: </strong> {work?.creditLine}
+                    </p>
+                    <p>
+                      <strong>Artist: </strong> {work?.artistDisplayName} (
+                      {work?.artistDisplayBio})
+                    </p>
+                    <p><a href={work?.artistULAN_URL}>ULAN artist url</a></p>
+                    <p><a href={work?.artistWikidata_URL}>Wikidata artist url</a></p>
+                    {!!(work?.constituents.length - 1) &&
+                      work?.constituents.map((con) => (
+                        <div key={uuidv4()}>
+                          <p>
+                            <strong>{con?.name}</strong>({con?.role}){" "}
+                            {con?.gender}
+                          </p>
+                          <p>
+                            <a href={con?.constituentULAN_URL}>
+                              ULAN artist url
+                            </a>
+                          </p>
+                          <p>
+                            <a href={con?.constituentWikidata_URL}>
+                              Wikidata artist url
+                            </a>
+                          </p>
+                        </div>
+                      ))}
+
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <img
+                        style={{ width: "70%" }}
+                        src={work?.primaryImage}
+                        alt={`${work?.title} image`}
+                      />
+                    </div>
+                    <p>
+                      <strong>
+                        Creation date
+                        {work?.objectBeginDate == work?.objectEndDate
+                          ? ""
+                          : "s"}
+                        :{" "}
+                      </strong>{" "}
+                      {work?.objectBeginDate == work?.objectEndDate
+                        ? work?.objectBeginDate
+                        : `${work?.objectBeginDate} - ${work?.objectEndDate}`}
+                    </p>
+                    <p>
+                      <strong>Dimensions: </strong> {work?.dimensions}
+                    </p>
+                    <p>
+                      <strong>Culture: </strong> {work?.culture}
+                    </p>
+                    {!!work?.dynasty && (
+                      <p>
+                        <strong>Dinasty: </strong> {work?.dynasty}
+                      </p>
+                    )}
+                    {!!work?.excavation && (
+                      <p>
+                        <strong>Excavation: </strong> {work?.excavation}
+                      </p>
+                    )}
+                    {!!work?.country && (
+                      <p>
+                        <strong>Country: </strong> {work?.country}
+                      </p>
+                    )}
+                    {!!work?.county && (
+                      <p>
+                        <strong>County: </strong> {work?.county}
+                      </p>
+                    )}
+                    {!!work?.state && (
+                      <p>
+                        <strong>state: </strong> {work?.state}
+                      </p>
+                    )}
+                    {!!work?.period && (
+                      <p>
+                        <strong>Period: </strong> {work?.period}
+                      </p>
+                    )}
+                    {!!work?.portfolio && (
+                      <p>
+                        <strong>Portfolio: </strong> {work?.portfolio}
+                      </p>
+                    )}
+                    {!!work?.rightsAndReproduction && (
+                      <p>
+                        <strong>Rights and reproduction: </strong> {work?.rightsAndReproduction}
+                      </p>
+                    )}
+                    <p>
+                      <strong>Medium: </strong> {work?.objectName}{" "}
+                      {work?.medium}
+                    </p>
+                    <p><a href={work?.objectURL}>Metropolitan link</a></p>
+                    <p><a href={work?.artistWikidata_URL}>Wikidata work url</a></p>
+                    {!!work?.linkResource && (
+                      <a href={work?.linkResource}>Link to resource</a>
+                    )}
+                    <p>
+                      <strong>Tags: </strong>
+                      {work?.tags.map((t) => t.term).join("/ ")}
+                    </p>
                   </Card>
                 );
               }
