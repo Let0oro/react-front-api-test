@@ -176,7 +176,6 @@ const MetDepartments = () => {
               }
               for (let i = 0; i < list.length; i++) {
                 const work = list[i];
-                console.log(work);
                 childrenReturned.push(
                   <Card key={uuidv4()}>
                     <p>
