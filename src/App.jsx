@@ -9,13 +9,11 @@ function App() {
     const linkPath = new URL(event.target.href).pathname
       .split("/")[1]
       .toLocaleLowerCase();
-    console.log(linkPath);
 
     const allImgs = [...document.querySelectorAll(".cut_title > a > img")];
     const filteredUrl = allImgs.find((el) =>
       el.alt.toLowerCase().includes(linkPath)
     );
-    console.log(filteredUrl);
     allImgs.forEach((img) => (img.parentElement.style.display = "none"));
     filteredUrl.parentElement.style.display = "block";
 

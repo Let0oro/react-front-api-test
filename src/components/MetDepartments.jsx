@@ -105,6 +105,13 @@ const MetDepartments = () => {
 
   useMemo(() => {
     const setData = async () => {
+      if (!listItems?.idList?.length) {
+        dispatch({
+          type: "SET_INFO",
+          list: [],
+        });
+        return;
+      }
       const finaldata = await Promise.all(
         listItems?.idList
           ?.filter(
@@ -125,14 +132,7 @@ const MetDepartments = () => {
         list: finaldata,
       });
     };
-    if (listItems?.idList?.length) {
       setData();
-    } else {
-      dispatch({
-        type: "SET_INFO",
-        list: [{ title: "Not found" }],
-      });
-    }
   }, [listItems?.search, listItems?.idList?.length, listItems?.page]);
 
   const { list } = listItems;
@@ -164,18 +164,19 @@ const MetDepartments = () => {
           <Await
             children={(list) => {
               const childrenReturned = [];
+              if (!list?.length) {
+                return (
+                  [<Card key={uuidv4()}>
+                    {" "}
+                    <p>
+                      <i>Not found</i>
+                    </p>{" "}
+                  </Card>]
+                );
+              }
               for (let i = 0; i < list.length; i++) {
                 const work = list[i];
                 console.log(work);
-                if (work.title == "Not found") {
-                  return [
-                    <Card key={uuidv4()}>
-                      <p>
-                        <i>{work?.title}</i>
-                      </p>
-                    </Card>,
-                  ];
-                }
                 childrenReturned.push(
                   <Card key={uuidv4()}>
                     <p>
@@ -187,13 +188,17 @@ const MetDepartments = () => {
                     <p>
                       <strong>Accession by: </strong> {work?.creditLine}
                     </p>
-                    <p>
+                    {!!work?.artistDisplayName && <p>
                       <strong>Artist: </strong> {work?.artistDisplayName} (
                       {work?.artistDisplayBio})
+                    </p>}
+                    <p>
+                      <a href={work?.artistULAN_URL}>ULAN artist url</a>
                     </p>
-                    <p><a href={work?.artistULAN_URL}>ULAN artist url</a></p>
-                    <p><a href={work?.artistWikidata_URL}>Wikidata artist url</a></p>
-                    {!!(work?.constituents.length - 1) &&
+                    <p>
+                      <a href={work?.artistWikidata_URL}>Wikidata artist url</a>
+                    </p>
+                    {!!(work?.constituents?.length) && !!(work?.constituents?.length - 1) &&
                       work?.constituents.map((con) => (
                         <div key={uuidv4()}>
                           <p>
@@ -235,8 +240,9 @@ const MetDepartments = () => {
                         :{" "}
                       </strong>{" "}
                       {work?.objectBeginDate == work?.objectEndDate
-                        ? work?.objectBeginDate
-                        : `${work?.objectBeginDate} - ${work?.objectEndDate}`}
+                        ? (work?.objectBeginDate < 0 ? `${0-work?.objectBeginDate} b. C.`: work?.objectBeginDate)
+                        : `${work?.objectBeginDate < 0 ? `${0-work?.objectBeginDate}`: work?.objectBeginDate} 
+                        - ${work?.objectEndDate < 0 ? `${0-work?.objectEndDate} b. C.`: work?.objectEndDate}`}
                     </p>
                     <p>
                       <strong>Dimensions: </strong> {work?.dimensions}
@@ -281,22 +287,27 @@ const MetDepartments = () => {
                     )}
                     {!!work?.rightsAndReproduction && (
                       <p>
-                        <strong>Rights and reproduction: </strong> {work?.rightsAndReproduction}
+                        <strong>Rights and reproduction: </strong>{" "}
+                        {work?.rightsAndReproduction}
                       </p>
                     )}
                     <p>
                       <strong>Medium: </strong> {work?.objectName}{" "}
                       {work?.medium}
                     </p>
-                    <p><a href={work?.objectURL}>Metropolitan link</a></p>
-                    <p><a href={work?.artistWikidata_URL}>Wikidata work url</a></p>
+                    <p>
+                      <a href={work?.objectURL}>Metropolitan link</a>
+                    </p>
+                    <p>
+                      <a href={work?.artistWikidata_URL}>Wikidata work url</a>
+                    </p>
                     {!!work?.linkResource && (
                       <a href={work?.linkResource}>Link to resource</a>
                     )}
-                    <p>
+                    {!!work?.tags && <p>
                       <strong>Tags: </strong>
-                      {work?.tags.map((t) => t.term).join("/ ")}
-                    </p>
+                      {work?.tags?.map((t) => t.term).join("/ ")}
+                    </p>}
                   </Card>
                 );
               }
