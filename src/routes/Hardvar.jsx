@@ -78,6 +78,7 @@ const Hardvar = () => {
 
   const { list } = listItems;
 
+
   const handleChangeRes = (ev) => {
     dispatch({ type: "CHANGE_RESOURCE", resource: ev.target.value });
     window.scrollTo(0, 0);
@@ -107,25 +108,26 @@ const Hardvar = () => {
         defaultValue={listItems?.resource || "gallery"}
         onChange={handleChangeRes}
       >
-        <option value={"gallery"}>gallery</option>
-        <option value={"person"}>person</option>
-        <option value={"exhibition"}>exhibition</option>
-        <option value={"publication"}>publication</option>
-        <option value={"culture"}>culture</option>
-        <option value={"site"}>site</option>
-        <option value={"video"}>video</option>
-        <option value={"image"}>image</option>
-        <option value={"audio"}>audio</option>
-        <option value={"annotation"}>annotation</option>
+        <option>gallery</option>
+        <option>person</option>
+        <option>exhibition</option>
+        <option>publication</option>
+        <option>culture</option>
+        <option>site</option>
+        <option>video</option>
+        <option>image</option>
+        <option>audio</option>
+        <option>annotation</option>
       </SideBar>
       <List>
         <Suspense fallback={<Spinner />}>
           <Await
             children={(list) => {
+              if (!list.length) return <Spinner />;
               const childrenReturned = [];
               for (let i = 0; i < list.length; i++) {
                 const work = list[i];
-                if (!!work?.geo) initMap(work?.geo);
+                if ( work?.geo) initMap(work?.geo);
                 childrenReturned.push(
                   <Card key={uuidv4()}>
                     <p>
@@ -154,9 +156,9 @@ const Hardvar = () => {
                       {work?.address || ""}
                       {work?.datebegin || work?.begindate || ""}
                       {work?.birthplace ? `(${work.birthplace})` : ""}
-                      {!!work?.datebegin ||
-                      !!work?.begindate ||
-                      !!work?.birthplace
+                      { work?.datebegin ||
+                       work?.begindate ||
+                       work?.birthplace
                         ? " - "
                         : " "}
                       {work?.dateend || work.enddate || ""}
@@ -175,7 +177,7 @@ const Hardvar = () => {
                         ""
                       )}
                     </p>
-                    {!!work?.gallerynumber && !!work.floor ? (
+                    { work?.gallerynumber &&  work.floor ? (
                       <p
                         style={{
                           border: "1px solid #888",
@@ -190,7 +192,7 @@ const Hardvar = () => {
                     ) : (
                       ""
                     )}
-                    {!!work?.primaryimageurl ||
+                    { work?.primaryimageurl ||
                     work?.baseimageurl ||
                     work?.target ? (
                       <div
@@ -202,6 +204,7 @@ const Hardvar = () => {
                       >
                         <Suspense fallback={<Spinner />}>
                           <img
+                          loading="lazy"
                             src={
                               work?.primaryimageurl ||
                               work?.baseimageurl ||
@@ -210,14 +213,14 @@ const Hardvar = () => {
                             alt={work?.title || work?.technique}
                           />
                         </Suspense>
-                        {!!work?.caption ? `(${work?.caption})` : ""}
-                        {!!work?.source ? `Source: (${work?.source})` : ""}
+                        { work?.caption ? `(${work?.caption})` : ""}
+                        { work?.source ? `Source: (${work?.source})` : ""}
                       </div>
                     ) : (
                       ""
                     )}
 
-                    {!!work.geo ? (
+                    { work.geo ? (
                       <Suspense fallback={<Spinner />}>
                         <Await
                           resolve={work?.geo}
@@ -234,13 +237,13 @@ const Hardvar = () => {
                         <span>
                           <strong>Description: </strong>{" "}
                           {work?.labeltext || work?.description + "\n"}
-                          {!!work?.shortdescription || ""}
+                          { work?.shortdescription || ""}
                         </span>
                       ) : (
                         ""
                       )}{" "}
                       {work?.primaryurl ? <br /> : ""}
-                      {(!!work?.url ||
+                      {( work?.url ||
                         work?.primaryurl ||
                         work?.iiifbaseuri) && (
                         <a
@@ -256,7 +259,7 @@ const Hardvar = () => {
                       )}
                     </p>
                     <p>
-                      {!!work?.roles && !!work?.roles?.length ? (
+                      { work?.roles &&  work?.roles?.length ? (
                         <span>
                           Roles: {work.roles.map((rol) => rol.role).join(", ")}
                         </span>

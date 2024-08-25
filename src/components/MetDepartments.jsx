@@ -187,7 +187,7 @@ const MetDepartments = () => {
                     <p>
                       <strong>Accession by: </strong> {work?.creditLine}
                     </p>
-                    {!!work?.artistDisplayName && <p>
+                    { work?.artistDisplayName && <p>
                       <strong>Artist: </strong> {work?.artistDisplayName} (
                       {work?.artistDisplayBio})
                     </p>}
@@ -197,7 +197,7 @@ const MetDepartments = () => {
                     <p>
                       <a href={work?.artistWikidata_URL}>Wikidata artist url</a>
                     </p>
-                    {!!(work?.constituents?.length) && !!(work?.constituents?.length - 1) &&
+                    { (work?.constituents?.length) &&  (work?.constituents?.length - 1) &&
                       work?.constituents.map((con) => (
                         <div key={uuidv4()}>
                           <p>
@@ -225,6 +225,7 @@ const MetDepartments = () => {
                       }}
                     >
                       <img
+                        loading="lazy"
                         style={{ width: "70%" }}
                         src={work?.primaryImage}
                         alt={`${work?.title} image`}
@@ -249,42 +250,42 @@ const MetDepartments = () => {
                     <p>
                       <strong>Culture: </strong> {work?.culture}
                     </p>
-                    {!!work?.dynasty && (
+                    { work?.dynasty && (
                       <p>
                         <strong>Dinasty: </strong> {work?.dynasty}
                       </p>
                     )}
-                    {!!work?.excavation && (
+                    { work?.excavation && (
                       <p>
                         <strong>Excavation: </strong> {work?.excavation}
                       </p>
                     )}
-                    {!!work?.country && (
+                    { work?.country && (
                       <p>
                         <strong>Country: </strong> {work?.country}
                       </p>
                     )}
-                    {!!work?.county && (
+                    { work?.county && (
                       <p>
                         <strong>County: </strong> {work?.county}
                       </p>
                     )}
-                    {!!work?.state && (
+                    { work?.state && (
                       <p>
                         <strong>state: </strong> {work?.state}
                       </p>
                     )}
-                    {!!work?.period && (
+                    { work?.period && (
                       <p>
                         <strong>Period: </strong> {work?.period}
                       </p>
                     )}
-                    {!!work?.portfolio && (
+                    { work?.portfolio && (
                       <p>
                         <strong>Portfolio: </strong> {work?.portfolio}
                       </p>
                     )}
-                    {!!work?.rightsAndReproduction && (
+                    { work?.rightsAndReproduction && (
                       <p>
                         <strong>Rights and reproduction: </strong>{" "}
                         {work?.rightsAndReproduction}
@@ -300,10 +301,10 @@ const MetDepartments = () => {
                     <p>
                       <a href={work?.artistWikidata_URL}>Wikidata work url</a>
                     </p>
-                    {!!work?.linkResource && (
+                    { work?.linkResource && (
                       <a href={work?.linkResource}>Link to resource</a>
                     )}
-                    {!!work?.tags && <p>
+                    { work?.tags && <p>
                       <strong>Tags: </strong>
                       {work?.tags?.map((t) => t.term).join("/ ")}
                     </p>}
